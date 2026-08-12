@@ -17,10 +17,14 @@ export default function LoginRegister() {
 
     const userData: UserLoginRequest = {
       user: {
-        email,
-        password,
+        email: email.trim(),
+        password: password.trim(),
       },
     };
+
+    if (!userData.user.email || !userData.user.password) {
+      return;
+    }
 
     try {
       const user = await logIn(userData);

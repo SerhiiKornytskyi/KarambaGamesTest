@@ -35,13 +35,6 @@ const useLogin = () => {
 
       // Assuming the API returns a UserLoginResponse object
       setData(result);
-      const token = result.user.token;
-
-      // Store the token in localStorage (no need to add Redux layer for this simple case)
-      if (token) {
-        localStorage.setItem('token', token);
-      }
-
       return result;
     } catch (err) {
       const loginError = new Error('Error: ' + (err as Error).message);
