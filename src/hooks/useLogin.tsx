@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import {UserLoginRequest, UserLoginResponse} from '../types/types';
+import { UserLoginRequest, UserLoginResponse } from '../types/types';
 import { apiConstants } from '../constants/constants';
 
 const useLogin = () => {

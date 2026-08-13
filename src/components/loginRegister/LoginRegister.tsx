@@ -9,7 +9,7 @@ export default function LoginRegister() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { logIn, error, data } = useLogin();
+  const { logIn, error } = useLogin();
   const { saveLoginUserData } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -27,8 +27,8 @@ export default function LoginRegister() {
     }
 
     try {
-      const user = await logIn(userData);
-      saveLoginUserData(user);
+      const loginData = await logIn(userData);
+      saveLoginUserData(loginData.user);
       setEmail('');
       setPassword('');
       history.push('/'); // Navigate to the home page after successful login

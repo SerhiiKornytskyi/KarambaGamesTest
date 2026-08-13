@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode} from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { User, AuthContextValue } from '../types/types';
 
 // create context with default value of null
@@ -10,17 +10,38 @@ type AuthProviderProps = {
 
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
+  
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      const raw = sessionStorage.getItem('user');
+      return raw ? (JSON.parse(raw) as User) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    // keep token in sync
+    if (user && user.token) {
+      sessionStorage.setItem('token', user.token);
+    }
+  }, [user]);
 
   const saveLoginUserData = (user: User) => {
-    console.log(' ++ Saving user data and token to localStorage');
-    localStorage.setItem('token', user.token);
+    console.log(' ++ Saving user data and token to sessionStorage', user);
+    try {
+      sessionStorage.setItem('token', user.token);
+      sessionStorage.setItem('user', JSON.stringify(user));
+    } catch (e) {
+      console.warn('Failed to persist user to sessionStorage', e);
+    }
     setUser(user);
   };
 
   const removeLoginUserData = () => {
-    console.log(' -- Removing user data and token from localStorage');
-    localStorage.removeItem('token');
+    console.log(' -- Removing user data and token from sessionStorage');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     setUser(null);
   };
 
