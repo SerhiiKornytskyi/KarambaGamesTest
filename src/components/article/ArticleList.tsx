@@ -1,4 +1,5 @@
-import Banner from "./components/common/Banner";
+import Banner from "../common/Banner";
+import Feed from "../common/Feed";
 
 export default function ArticleList() {
   return (
@@ -7,22 +8,8 @@ export default function ArticleList() {
         <Banner/>
         <div className="container page">
           <div className="row">
-            <div className="col-md-9">
-              <div className="feed-toggle">
-                <ul className="nav nav-pills outline-active">
-                  {/* <li className="nav-item">
-                    <a className="nav-link disabled" href="">
-                      Your Feed
-                    </a>
-                  </li> */}
-                  <li className="nav-item">
-                    <a className="nav-link active" href="">
-                      Global Feed
-                    </a>
-                  </li>
-                </ul>
-              </div>
-
+            <Feed />
+            <div className="col-md-9"> 
               <div className="article-preview">
                 <div className="article-meta">
                   <a href="/#/profile/ericsimmons">
@@ -103,18 +90,6 @@ export default function ArticleList() {
           </div>
         </div>
       </div>
-
-      <footer>
-        <div className="container">
-          <a href="/#" className="logo-font">
-            conduit
-          </a>
-          <span className="attribution">
-            An interactive learning project from <a href="https://thinkster.io">Thinkster</a>. Code &amp; design
-            licensed under MIT.
-          </span>
-        </div>
-      </footer>
     </>
   );
 }
