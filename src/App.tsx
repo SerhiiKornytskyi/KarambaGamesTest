@@ -1,23 +1,17 @@
-import React from "react";
 import './styles.css';
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
-import { useCheckTokenValid } from "./hooks/useCheckTokenValid";
-import { useAuth } from "./hooks/useAuth";
 import PrivateRoute from "./components/common/PrivateRoute";
 import Article from "./components/article/Article";
 import ArticleList from "./components/article/ArticleList";
 import Editor from "./components/article/Editor";
 import LoginRegister from "./components/loginRegister/LoginRegister";
 import Logout from "./Logout";
-import Profile from "./Profile";
+import Profile from "./components/profile/Profile";
 import Settings from "./Settings";
 import Footer from "./components/common/Footer";
 import Header from "./components/common/Header";
 
 function App() {
-
-  const { user } = useAuth();
-  const { isExpired } = useCheckTokenValid(user?.token ?? null);
 
   return (
     <Router>

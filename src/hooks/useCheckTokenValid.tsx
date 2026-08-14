@@ -33,10 +33,10 @@ export const useCheckTokenValid = (token?: string | null) => {
     }
     }, [token, removeLoginUserData]);
 
-    // Check on mount AND before every 5 minutes
     useEffect(() => {
       checkToken(); // Check immediately
-      const interval = setInterval(checkToken, 3000);
+      const interval = setInterval(checkToken, 30000);
+      console.log("Check Valid >>> ", isExpired);
       return () => clearInterval(interval);
     }, [checkToken]);
 
