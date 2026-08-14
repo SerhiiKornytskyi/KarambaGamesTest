@@ -68,3 +68,7 @@ export interface FeedPageProps {
     onToggleFeed: (e: React.MouseEvent<HTMLAnchorElement>, isGlobalTab: boolean) => void;
     isGlobal: boolean;
 }
+
+export interface TagListProps {
+    tags: string[];
+};

@@ -37,7 +37,8 @@ export default function Editor() {
     const { name, value } = e.target;
 
     if (name === 'tags') {
-      const tagList = value.split(',').map((tag) => tag.trim()).filter(Boolean);
+
+      const tagList = value.split(' ');
       setFormData(prev => ({ ...prev, tagList }));
       return;
     }
@@ -77,7 +78,7 @@ export default function Editor() {
                     <textarea name="body" className="form-control" rows={8} placeholder="Write your article (in markdown)" value={formData.body} onChange={handleChange} />
                   </fieldset>
                   <fieldset className="form-group">
-                    <input type="text" name="tags" className="form-control" placeholder="Enter tags" value={formData.tagList.join(', ')} onChange={handleChange} />
+                    <input type="text" name="tags" className="form-control" placeholder="Enter tags" value={formData.tagList.join(' ')} onChange={handleChange} />
                     <div className="tag-list" />
                   </fieldset>
                   <button className="btn btn-lg pull-xs-right btn-primary" type="submit">

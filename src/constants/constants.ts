@@ -7,5 +7,5 @@ export const defaultArticleFormdata = {
     title: '',
     description: '',
     body: '',
-    tagList: ['test']
+    tagList: ['']
 }
