@@ -45,11 +45,12 @@ export default function Profile() {
               <div className="col-xs-12 col-md-10 offset-md-1">
                 <img src={profile.image || defaultAvatar} className="user-img" alt={profile.username} />
                 <h4>{profile.username}</h4>
-                <p>{profile.bio || 'No bio available.'}</p>
+                <p>{profile.bio || "No bio available."}</p>
+
                 {!isOwnProfile && (
                   <button className="btn btn-sm btn-outline-secondary action-btn">
                     <i className="ion-plus-round" />
-                    &nbsp; {profile.following ? 'Unfollow' : 'Follow'} {profile.username}
+                    &nbsp; {profile.following ? "Unfollow" : "Follow"} {profile.username}
                   </button>
                 )}
               </div>
@@ -63,14 +64,17 @@ export default function Profile() {
               <div className="articles-toggle">
                 <ul className="nav nav-pills outline-active">
                   <li className="nav-item">
-                     <span>My Articles</span>
+                    <span className="nav-link active">My Articles</span>
                   </li>
                 </ul>
               </div>
-            </div>
 
-            {/* article list */}
-               
+              {articlesLoading && <p>Loading articles...</p>}
+
+              {!articlesLoading && articles.length > 0
+                ? articles.map((article) => <ArticlePreview key={article.slug} article={article} />)
+                : !articlesLoading && <div className="article-preview">No articles yet.</div>}
+            </div>
           </div>
         </div>
       </div>

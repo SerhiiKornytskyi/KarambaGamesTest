@@ -1,5 +1,25 @@
 # Assignment for Frontend Engineer job applicants
 
+## What's implemented in this solution: 
+
+I didn't use any global state handling apart of Context Api and sessionStorage as I think it's enough for this particular task.  
+
+1) User login (no registration as per requirement)
+2) JWT-based authenticated session handling (using sessionStorage)
+3) Protected routes for authenticated users
+4) Article listing for global and personal feeds
+5) Article detail view by slug
+6) Article creation and editing
+7) Article deletion
+8) Favorite/like toggling for articles
+9) Follow/unfollow author profiles
+10) Profile page for viewing a user’s public profile
+11) User’s created articles listing on profile
+12) Logout and redirect to homepage
+14) Settings page, comments and tag system is not implemented as per requirements.
+15) Default avatar and article metadata display
+
+
 ## Background
 
 Your task is to implement a simple CRUD application. The application is based on [Conduit, "The mother of all demo apps"](https://github.com/gothinkster/realworld), which is a simple clone of [Medium.com](https://medium.com/). The demo of the application can be found at https://demo.realworld.io/.

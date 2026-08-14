@@ -31,12 +31,12 @@ const ArticleActions = ({
     <div>
       <button className={followButtonClass} onClick={handleFollowToggle} disabled={followLoading}>
         <i className="ion-plus-round" />
-        &nbsp; {isFollowing ? 'Unfollow' : 'Follow'} {article.author.username}
+        &nbsp; {isFollowing ? "Unfollow" : "Follow"} {article.author.username}
       </button>
       &nbsp;
       <button className={favoriteButtonClass} onClick={handleFavoriteToggle} disabled={favoriteLoading}>
         <i className="ion-heart" />
-        &nbsp; {isFavorited ? 'Unfavorite' : 'Favorite'} Post <span className="counter">({favoriteCount})</span>
+        &nbsp; {isFavorited ? "Unfavorite" : "Favorite"} Post <span className="counter">({favoriteCount})</span>
       </button>
       &nbsp;
       <a className="btn btn-sm btn-outline-secondary" href={`/#/editor/${article.slug}`}>
