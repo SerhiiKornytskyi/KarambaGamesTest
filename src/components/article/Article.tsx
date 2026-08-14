@@ -1,14 +1,35 @@
 import { defaultAvatar } from "../../constants/constants";
 import UseGetSingleArticle from "../../hooks/useGetSingleArticle";
 import { useAuth } from "../../hooks/useAuth";
+import useFollowAuthor from "../../hooks/useFollowAuthor";
 import { useHistory, useParams } from "react-router-dom";
 import { deleteArticle } from "../../helpers/deleteArticle";
+import { useEffect, useState } from "react";
+import { Article as ArticleModel } from "../../types/types";
+
+type ArticleActionsProps = {
+  article: ArticleModel;
+  isFollowing: boolean;
+  followButtonClass: string;
+  favoriteButtonClass: string;
+  followLoading: boolean;
+  handleFollowToggle: () => Promise<void>;
+  handleDeleteArticle: (event: React.MouseEvent<HTMLAnchorElement>) => Promise<void>;
+};
 
 export default function Article() {
   const { slug } = useParams<{ slug?: string }>();
   const history = useHistory();
   const { user } = useAuth();
   const { article, loading, error } = UseGetSingleArticle(slug);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const { toggleFollow, loading: followLoading } = useFollowAuthor(article?.author.username, article?.author.following);
+
+  useEffect(() => {
+    if (article?.author) {
+      setIsFollowing(article.author.following);
+    }
+  }, [article]);
 
   if (!slug) {
     return null;
@@ -49,43 +70,54 @@ export default function Article() {
     }
   };
 
+  const followButtonClass = isFollowing
+    ? 'btn btn-sm btn-primary'
+    : 'btn btn-sm btn-outline-secondary';
+
+  const favoriteButtonClass = article.favorited
+    ? 'btn btn-sm btn-primary'
+    : 'btn btn-sm btn-outline-primary';
+
+  const handleFollowToggle = async () => {
+    if (!article.author.username || !user?.token) {
+      return;
+    }
+
+    const updatedProfile = await toggleFollow();
+    if (updatedProfile) {
+      setIsFollowing(updatedProfile.following);
+    }
+  };
+
   return (
     <>
       <div className="article-page">
         <div className="banner">
           <div className="container">
             <h1>{article.title}</h1>
-            <div className="article-meta">
-              <a href={`/#/profile/${article.author.username}`}>
-                <img src={article.author.image || defaultAvatar} alt={article.author.username} />
-              </a>
-              <div className="info">
-                <a href={`/#/profile/${article.author.username}`} className="author">
-                  {article.author.username}
+              <div className="article-meta">
+                <a href={`/#/profile/${article.author.username}`}>
+                  <img src={article.author.image || defaultAvatar} alt={article.author.username} />
                 </a>
-                <span className="date">{new Date(article.createdAt).toDateString()}</span>
+                <div className="info">
+                  <a href={`/#/profile/${article.author.username}`} className="author">
+                    {article.author.username}
+                  </a>
+                  <span className="date">{new Date(article.createdAt).toDateString()}</span>
+                </div>
+                {user && user.token ? (
+                  <ArticleActions
+                    article={article}
+                    isFollowing={isFollowing}
+                    followButtonClass={followButtonClass}
+                    favoriteButtonClass={favoriteButtonClass}
+                    followLoading={followLoading}
+                    handleFollowToggle={handleFollowToggle}
+                    handleDeleteArticle={handleDeleteArticle}
+                  />
+                ) : null}
               </div>
-              <button className="btn btn-sm btn-outline-secondary">
-                <i className="ion-plus-round" />
-                &nbsp; {article.author.following ? 'Unfollow' : 'Follow'} {article.author.username}
-              </button>
-              &nbsp;
-              <button className="btn btn-sm btn-outline-primary">
-                <i className="ion-heart" />
-                &nbsp; {article.favorited ? 'Unfavorite' : 'Favorite'} Post <span className="counter">({article.favoritesCount})</span>
-              </button>
-              &nbsp;
-              <a className="btn btn-sm btn-outline-secondary" href={`/#/editor/${article.slug}`}>
-                <i className="ion-edit" />
-                &nbsp; Edit Article
-              </a>
-              &nbsp;
-              <a className="btn btn-sm btn-outline-secondary" href="#" onClick={handleDeleteArticle}>
-                <i className="ion-delete" />
-                &nbsp; Delete Article
-              </a>
             </div>
-          </div>
         </div>
 
         <div className="container page">
@@ -101,3 +133,37 @@ export default function Article() {
     </>
   );
 }
+
+const ArticleActions = ({
+  article,
+  isFollowing,
+  followButtonClass,
+  favoriteButtonClass,
+  followLoading,
+  handleFollowToggle,
+  handleDeleteArticle,
+}: ArticleActionsProps) => {
+  return (
+      <div>
+          <button className={followButtonClass} onClick={handleFollowToggle} disabled={followLoading}>
+            <i className="ion-plus-round" />
+            &nbsp; {isFollowing ? 'Unfollow' : 'Follow'} {article.author.username}
+          </button>
+          &nbsp;
+          <button className={favoriteButtonClass}>
+            <i className="ion-heart" />
+            &nbsp; {article.favorited ? 'Unfavorite' : 'Favorite'} Post <span className="counter">({article.favoritesCount})</span>
+          </button>
+          &nbsp;
+          <a className="btn btn-sm btn-outline-secondary" href={`/#/editor/${article.slug}`}>
+            <i className="ion-edit" />
+            &nbsp; Edit Article
+          </a>
+          &nbsp;
+          <a className="btn btn-sm btn-outline-secondary" href="#" onClick={handleDeleteArticle}>
+            <i className="ion-delete" />
+            &nbsp; Delete Article
+          </a>
+      </div>
+  );
+};

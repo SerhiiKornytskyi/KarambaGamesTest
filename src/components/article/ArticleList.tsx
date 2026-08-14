@@ -10,7 +10,7 @@ export default function ArticleList() {
 
   const [isGlobal, setIsGlobal] = useState(true);
 
-  const {data} = UseGetArticles(isGlobal);
+  const {data, loading} = UseGetArticles(isGlobal);
   
   const onToggleFeed = (e: React.MouseEvent<HTMLAnchorElement>, isGlobalTab: boolean) => {
     e.preventDefault();
@@ -25,6 +25,7 @@ export default function ArticleList() {
           <div className="row">
             <div className="col-md-9">
               <FeedSelectorTabs onToggleFeed={onToggleFeed} isGlobal={isGlobal} />
+              {loading && <fieldset className="form-group"><span className="text-danger">{"Loading..."}</span></fieldset>}
               {data && data.articles && data.articles.length > 0 ? (
                 data.articles.map((article) => (
                   <ArticlePreview key={article.slug} article={article} />

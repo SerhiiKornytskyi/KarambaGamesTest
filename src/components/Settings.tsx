@@ -1,5 +1,5 @@
-import Header from "./components/common/Header";
-import Footer from  "./components/common/Footer";
+import Header from "./common/Header";
+import Footer from  "./common/Footer";
 
 export default function Settings() {
   return (

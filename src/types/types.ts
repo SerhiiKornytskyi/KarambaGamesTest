@@ -52,6 +52,17 @@ export interface CreateArticleRequestData {
     tagList: string[]
   }
 
+export interface Profile {
+  username: string;
+  bio: string;
+  image: string;
+  following: boolean;
+}
+
+export interface ProfileResponse {
+  profile: Profile;
+}
+
 export interface ArticlesResponse {
   articles: Article[];
   articlesCount: number;
