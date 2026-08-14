@@ -63,6 +63,10 @@ export interface ProfileResponse {
   profile: Profile;
 }
 
+export interface SingleArticleResponse {
+  article: Article;
+}
+
 export interface ArticlesResponse {
   articles: Article[];
   articlesCount: number;

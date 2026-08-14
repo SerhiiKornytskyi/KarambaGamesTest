@@ -6,15 +6,20 @@ import { useHistory, useParams } from "react-router-dom";
 import { deleteArticle } from "../../helpers/deleteArticle";
 import { useEffect, useState } from "react";
 import { Article as ArticleModel } from "../../types/types";
+import useFavoriteArticle from "../../hooks/useFavoriteArticle";
 
 type ArticleActionsProps = {
   article: ArticleModel;
   isFollowing: boolean;
+  isFavorited: boolean;
+  favoriteCount: number;
   followButtonClass: string;
   favoriteButtonClass: string;
   followLoading: boolean;
   handleFollowToggle: () => Promise<void>;
   handleDeleteArticle: (event: React.MouseEvent<HTMLAnchorElement>) => Promise<void>;
+  handleFavoriteToggle: () => Promise<void>;
+  favoriteLoading: boolean;
 };
 
 export default function Article() {
@@ -23,11 +28,21 @@ export default function Article() {
   const { user } = useAuth();
   const { article, loading, error } = UseGetSingleArticle(slug);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [favoriteCount, setFavoriteCount] = useState(0);
   const { toggleFollow, loading: followLoading } = useFollowAuthor(article?.author.username, article?.author.following);
+  const { toggleFavorite, loading: favoriteLoading } = useFavoriteArticle(slug, article?.favorited);
 
   useEffect(() => {
     if (article?.author) {
       setIsFollowing(article.author.following);
+    }
+  }, [article]);
+
+  useEffect(() => {
+    if (article) {
+      setIsFavorited(article.favorited);
+      setFavoriteCount(article.favoritesCount);
     }
   }, [article]);
 
@@ -74,7 +89,7 @@ export default function Article() {
     ? 'btn btn-sm btn-primary'
     : 'btn btn-sm btn-outline-secondary';
 
-  const favoriteButtonClass = article.favorited
+  const favoriteButtonClass = isFavorited
     ? 'btn btn-sm btn-primary'
     : 'btn btn-sm btn-outline-primary';
 
@@ -86,6 +101,18 @@ export default function Article() {
     const updatedProfile = await toggleFollow();
     if (updatedProfile) {
       setIsFollowing(updatedProfile.following);
+    }
+  };
+
+  const handleFavoriteToggle = async () => {
+    if (!slug || !user?.token) {
+      return;
+    }
+
+    const updatedArticle = await toggleFavorite();
+    if (updatedArticle) {
+      setIsFavorited(updatedArticle.favorited);
+      setFavoriteCount(updatedArticle.favoritesCount);
     }
   };
 
@@ -109,11 +136,15 @@ export default function Article() {
                   <ArticleActions
                     article={article}
                     isFollowing={isFollowing}
+                    isFavorited={isFavorited}
+                    favoriteCount={favoriteCount}
                     followButtonClass={followButtonClass}
                     favoriteButtonClass={favoriteButtonClass}
                     followLoading={followLoading}
                     handleFollowToggle={handleFollowToggle}
                     handleDeleteArticle={handleDeleteArticle}
+                    handleFavoriteToggle={handleFavoriteToggle}
+                    favoriteLoading={favoriteLoading}
                   />
                 ) : null}
               </div>
@@ -137,11 +168,15 @@ export default function Article() {
 const ArticleActions = ({
   article,
   isFollowing,
+  isFavorited,
+  favoriteCount,
   followButtonClass,
   favoriteButtonClass,
   followLoading,
   handleFollowToggle,
   handleDeleteArticle,
+  handleFavoriteToggle,
+  favoriteLoading,
 }: ArticleActionsProps) => {
   return (
       <div>
@@ -150,9 +185,9 @@ const ArticleActions = ({
             &nbsp; {isFollowing ? 'Unfollow' : 'Follow'} {article.author.username}
           </button>
           &nbsp;
-          <button className={favoriteButtonClass}>
+          <button className={favoriteButtonClass} onClick={handleFavoriteToggle} disabled={favoriteLoading}>
             <i className="ion-heart" />
-            &nbsp; {article.favorited ? 'Unfavorite' : 'Favorite'} Post <span className="counter">({article.favoritesCount})</span>
+            &nbsp; {isFavorited ? 'Unfavorite' : 'Favorite'} Post <span className="counter">({favoriteCount})</span>
           </button>
           &nbsp;
           <a className="btn btn-sm btn-outline-secondary" href={`/#/editor/${article.slug}`}>
