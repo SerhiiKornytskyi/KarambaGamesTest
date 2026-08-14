@@ -3,15 +3,10 @@ import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../hooks/useAuth";
 
 export const useCheckTokenValid = (token?: string | null) => {
-  console.log('useCheckTokenValid called with token:', token);
-
-  
-
-  const { removeLoginUserData, saveLoginUserData } = useAuth();
+  const { removeLoginUserData } = useAuth();
   const [isExpired, setIsExpired] = useState(false);
 
   const checkToken = useCallback(() => {
-    
     if (!token) {
       setIsExpired(true);
       return true;
@@ -20,25 +15,26 @@ export const useCheckTokenValid = (token?: string | null) => {
     try {
       const decoded = jwtDecode<{ exp?: number }>(token);
       const expired = typeof decoded.exp !== 'number' || decoded.exp * 1000 < Date.now();
-      console.log('Token expired:', decoded, expired, sessionStorage);
       setIsExpired(expired);
-      
-      expired && removeLoginUserData();
-      
+
+      if (expired) {
+        removeLoginUserData();
+      }
+
       return expired;
     } catch (e) {
       setIsExpired(true);
       removeLoginUserData();
       return true;
     }
-    }, [token, removeLoginUserData]);
+  }, [token, removeLoginUserData]);
 
-    useEffect(() => {
-      checkToken(); // Check immediately
-      const interval = setInterval(checkToken, 30000);
-      console.log("Check Valid >>> ", isExpired);
-      return () => clearInterval(interval);
-    }, [checkToken]);
+  useEffect(() => {
+    checkToken();
+    const interval = setInterval(checkToken, 30000);
 
-    return { isExpired, checkToken };
+    return () => clearInterval(interval);
+  }, [checkToken]);
+
+  return { isExpired, checkToken };
 };
