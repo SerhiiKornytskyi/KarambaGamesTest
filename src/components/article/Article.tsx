@@ -1,17 +1,13 @@
 import { defaultAvatar } from "../../constants/constants";
 import UseGetSingleArticle from "../../hooks/useGetSingleArticle";
-import { Article as ArticleType } from "../../types/types";
+import { useAuth } from "../../hooks/useAuth";
+import { useHistory, useParams } from "react-router-dom";
+import { deleteArticle } from "../../helpers/deleteArticle";
 
-type ArticleProps = {
-  match?: {
-    params?: {
-      slug?: string;
-    };
-  };
-};
-
-export default function Article({ match }: ArticleProps) {
-  const slug = match?.params?.slug;
+export default function Article() {
+  const { slug } = useParams<{ slug?: string }>();
+  const history = useHistory();
+  const { user } = useAuth();
   const { article, loading, error } = UseGetSingleArticle(slug);
 
   if (!slug) {
@@ -38,6 +34,21 @@ export default function Article({ match }: ArticleProps) {
     );
   }
 
+  const handleDeleteArticle = async (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+
+    if (!slug || !user?.token) {
+      return;
+    }
+
+    try {
+      await deleteArticle(slug, user.token);
+      history.push('/');
+    } catch (err) {
+      console.error('Failed to delete article:', err);
+    }
+  };
+
   return (
     <>
       <div className="article-page">
@@ -63,6 +74,16 @@ export default function Article({ match }: ArticleProps) {
                 <i className="ion-heart" />
                 &nbsp; {article.favorited ? 'Unfavorite' : 'Favorite'} Post <span className="counter">({article.favoritesCount})</span>
               </button>
+              &nbsp;
+              <a className="btn btn-sm btn-outline-secondary" href={`/#/editor/${article.slug}`}>
+                <i className="ion-edit" />
+                &nbsp; Edit Article
+              </a>
+              &nbsp;
+              <a className="btn btn-sm btn-outline-secondary" href="#" onClick={handleDeleteArticle}>
+                <i className="ion-delete" />
+                &nbsp; Delete Article
+              </a>
             </div>
           </div>
         </div>

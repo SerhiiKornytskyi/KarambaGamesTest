@@ -10,18 +10,22 @@ import Profile from "./components/profile/Profile";
 import Settings from "./Settings";
 import Footer from "./components/common/Footer";
 import Header from "./components/common/Header";
+import { useAuth } from './hooks/useAuth';
+import { useCheckTokenValid } from './hooks/useCheckTokenValid';
 
 function App() {
+  const { user } = useAuth();
+  useCheckTokenValid(user?.token ?? null);
 
   return (
     <Router>
       <Header />
       <Switch>
         {/* Accessibble for signed in only */}
-        <PrivateRoute path="/editor">
+        <PrivateRoute path="/editor/:slug" exact>
           <Editor />
         </PrivateRoute>
-        <PrivateRoute path="/editor/:slug">
+        <PrivateRoute path="/editor" exact>
           <Editor />
         </PrivateRoute>
         <PrivateRoute path="/profile/:username">

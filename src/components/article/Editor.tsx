@@ -11,13 +11,17 @@ export default function Editor() {
   const [formData, setFormData] = useState<CreateArticleRequestData>({
     ...defaultArticleFormdata,
     tagList: [...defaultArticleFormdata.tagList],
-  } as CreateArticleRequestData);
+  });
 
   const { article, loading: articleLoading, error: articleError } = UseGetSingleArticle(slug);
   const { createArticle, error, loading } = UseCreateArticle(formData, slug);
 
   useEffect(() => {
     if (!article) {
+      setFormData({
+        ...defaultArticleFormdata,
+        tagList: [...defaultArticleFormdata.tagList],
+      });
       return;
     }
 
@@ -27,7 +31,7 @@ export default function Editor() {
       body: article.body,
       tagList: article.tagList || [],
     });
-  }, [article]);
+  }, [article, slug]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -48,12 +52,11 @@ export default function Editor() {
     e.preventDefault();
     await createArticle();
 
-    if (!slug) {
-      setFormData({
-        ...defaultArticleFormdata,
-        tagList: [...defaultArticleFormdata.tagList],
-      } as CreateArticleRequestData);
-    }
+    
+    setFormData({
+      ...defaultArticleFormdata,
+      tagList: [...defaultArticleFormdata.tagList],
+    });
   };
 
   return (

@@ -50,7 +50,7 @@ const UseGetSingleArticle = (slug?: string) => {
       }, [slug, user?.token]);
 
       useEffect(() => {
-        getArticle();
+        void getArticle();
       }, [getArticle]);
 
       return { getArticle, article, error, loading };
