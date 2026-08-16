@@ -29,6 +29,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const saveLoginUserData = (user: User) => {
     console.log(' ++ Saving user data and token to sessionStorage', user);
+    // TODO: As for this project's purpose I think it's enough to use sessionstorage as user data storage
     try {
       sessionStorage.setItem('token', user.token);
       sessionStorage.setItem('user', JSON.stringify(user));

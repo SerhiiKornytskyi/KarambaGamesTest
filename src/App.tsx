@@ -12,7 +12,7 @@ import Footer from "./components/common/Footer";
 import Header from "./components/common/Header";
 import { useAuth } from './hooks/useAuth';
 import { useCheckTokenValid } from './hooks/useCheckTokenValid';
-
+   
 function App() {
   const { user } = useAuth();
   useCheckTokenValid(user?.token ?? null);
