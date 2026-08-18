@@ -12,6 +12,7 @@ export type ArticleActionsProps = {
   handleDeleteArticle: (event: React.MouseEvent<HTMLAnchorElement>) => Promise<void>;
   handleFavoriteToggle: () => Promise<void>;
   favoriteLoading: boolean;
+  isAuthor: boolean;
 };
 
 const ArticleActions = ({
@@ -26,14 +27,19 @@ const ArticleActions = ({
   handleDeleteArticle,
   handleFavoriteToggle,
   favoriteLoading,
+  isAuthor,
 }: ArticleActionsProps) => {
   return (
     <div>
-      <button className={followButtonClass} onClick={handleFollowToggle} disabled={followLoading}>
-        <i className="ion-plus-round" />
-        &nbsp; {isFollowing ? "Unfollow" : "Follow"} {article.author.username}
-      </button>
-      &nbsp;
+      {!isAuthor && (
+        <>
+          <button className={followButtonClass} onClick={handleFollowToggle} disabled={followLoading}>
+            <i className="ion-plus-round" />
+            &nbsp; {isFollowing ? "Unfollow" : "Follow"} {article.author.username}
+          </button>
+          &nbsp;
+        </>
+      )}
       <button className={favoriteButtonClass} onClick={handleFavoriteToggle} disabled={favoriteLoading}>
         <i className="ion-heart" />
         &nbsp; {isFavorited ? "Unfavorite" : "Favorite"} Post <span className="counter">({favoriteCount})</span>

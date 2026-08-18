@@ -3,14 +3,24 @@ import { defaultAvatar } from "../../constants/constants";
 import { useAuth } from "../../hooks/useAuth";
 import useGetProfile from "../../hooks/useGetProfile";
 import useGetProfileArticles from "../../hooks/useGetProfileArticles";
+import useFollowAuthor from "../../hooks/useFollowAuthor";
 import ArticlePreview from "../article/ArticlePreview";
+import { useState, useEffect } from "react";
 
 export default function Profile() {
   const { username } = useParams<{ username?: string }>();
   const { user } = useAuth();
   const { profile, loading, error } = useGetProfile(username);
   const { articles, loading: articlesLoading } = useGetProfileArticles(username);
+  const { toggleFollow, loading: followLoading } = useFollowAuthor(username, profile?.following);
+  const [isFollowing, setIsFollowing] = useState(false);
   const isOwnProfile = !!user?.username && !!profile?.username && user.username === profile.username;
+
+  useEffect(() => {
+    if (profile) {
+      setIsFollowing(profile.following);
+    }
+  }, [profile]);
 
   if (!username) {
     return null;
@@ -36,6 +46,21 @@ export default function Profile() {
     );
   }
 
+  const followButtonClass = isFollowing
+    ? 'btn btn-sm btn-primary'
+    : 'btn btn-sm btn-outline-secondary';
+
+  const handleFollowToggle = async () => {
+    if (!username || !user?.token) {
+      return;
+    }
+
+    const updatedProfile = await toggleFollow();
+    if (updatedProfile) {
+      setIsFollowing(updatedProfile.following);
+    }
+  };
+
   return (
     <>
       <div className="profile-page">
@@ -48,9 +73,13 @@ export default function Profile() {
                 <p>{profile.bio || "No bio available."}</p>
 
                 {!isOwnProfile && (
-                  <button className="btn btn-sm btn-outline-secondary action-btn">
+                  <button 
+                    className={followButtonClass}
+                    onClick={handleFollowToggle}
+                    disabled={followLoading}
+                  >
                     <i className="ion-plus-round" />
-                    &nbsp; {profile.following ? "Unfollow" : "Follow"} {profile.username}
+                    &nbsp; {isFollowing ? "Unfollow" : "Follow"} {profile.username}
                   </button>
                 )}
               </div>

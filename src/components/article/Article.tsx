@@ -131,6 +131,7 @@ export default function Article() {
                     handleDeleteArticle={handleDeleteArticle}
                     handleFavoriteToggle={handleFavoriteToggle}
                     favoriteLoading={favoriteLoading}
+                    isAuthor={user.username === article.author.username}
                   />
                 ) : null}
               </div>

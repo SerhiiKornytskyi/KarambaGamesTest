@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import UseCreateArticle from "../../hooks/useCreateArticle";
 import UseGetSingleArticle from '../../hooks/useGetSingleArticle';
 import { CreateArticleRequestData } from '../../types/types';
@@ -7,6 +7,7 @@ import { defaultArticleFormdata } from '../../constants/constants';
 
 export default function Editor() {
   const { slug } = useParams<{ slug?: string }>();
+  const history = useHistory();
 
   const [formData, setFormData] = useState<CreateArticleRequestData>({
     ...defaultArticleFormdata,
@@ -51,13 +52,11 @@ export default function Editor() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await createArticle();
+    const result = await createArticle();
 
-    
-    setFormData({
-      ...defaultArticleFormdata,
-      tagList: [...defaultArticleFormdata.tagList],
-    });
+    if (result) {
+      history.push('/');
+    }
   };
 
   return (
